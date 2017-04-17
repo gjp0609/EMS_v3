@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.gjp0609.ems.v3.dao.ManagerDao">
+    <!--123-->
+    <cache/>
+    <insert id="addManager">
+        INSERT INTO T_EMS_V3_MANAGER VALUES (#{name}, #{password}, #{salt})
+    </insert>
+
+    <select id="selectManager" resultType="Manager">
+        SELECT
+            NAME,
+            PASSWORD,
+            SALT
+        FROM T_EMS_V3_ADMIN
+        WHERE NAME = #{name}
+    </select>
+</mapper>

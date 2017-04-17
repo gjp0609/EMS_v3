@@ -1,0 +1,81 @@
+CREATE TABLE T_EMS_V3_DEPARTMENT (
+  ID   NUMBER(2) PRIMARY KEY,
+  NAME VARCHAR2(20) NOT NULL
+);
+
+CREATE TABLE T_EMS_V3_EMPLOYEE (
+  ID       NUMBER(6) PRIMARY KEY,
+  NAME     VARCHAR2(20)  NOT NULL,
+  SEX      VARCHAR2(4)   NOT NULL,
+  SALARY   NUMBER(10, 2) NOT NULL,
+  BIRTHDAY DATE          NOT NULL,
+  DEPT_ID  NUMBER(2) REFERENCES T_EMS_V3_DEPARTMENT (ID)
+);
+
+DROP TABLE T_EMS_V3_EMPLOYEE;
+
+CREATE TABLE T_EMS_V3_MANAGER (
+  NAME     VARCHAR2(20) PRIMARY KEY,
+  PASSWORD VARCHAR2(32) NOT NULL,
+  SALT     VARCHAR2(10) NOT NULL
+);
+
+CREATE SEQUENCE T_EMS_V3_SEQ START WITH 100001 INCREMENT BY 1;
+
+INSERT INTO T_EMS_V3_DEPARTMENT VALUES (10, '销售部');
+INSERT INTO T_EMS_V3_DEPARTMENT VALUES (20, '行政部');
+INSERT INTO T_EMS_V3_DEPARTMENT VALUES (30, '采购部');
+INSERT INTO T_EMS_V3_DEPARTMENT VALUES (40, '后勤部');
+INSERT INTO T_EMS_V3_DEPARTMENT VALUES (50, '技术部');
+
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '禅雅塔', '男', 3320, to_date('1990-07-19', 'yyyy-mm-dd'), 20);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '麦克雷', '男', 9470, to_date('1984-04-24', 'yyyy-mm-dd'), 40);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '猎空', '女', 2960, to_date('1993-07-30', 'yyyy-mm-dd'), 10);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '士兵', '男', 2720, to_date('1985-04-03', 'yyyy-mm-dd'), 20);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '岛田源', '男', 9320, to_date('1983-02-20', 'yyyy-mm-dd'), 50);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '莱因哈特', '男', 2720, to_date('1993-12-24', 'yyyy-mm-dd'), 40);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '安娜', '女', 8720, to_date('1999-06-09', 'yyyy-mm-dd'), 30);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '托比昂', '男', 2320, to_date('1993-11-24', 'yyyy-mm-dd'), 50);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '卢西奥', '男', 8320, to_date('1979-09-27', 'yyyy-mm-dd'), 10);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '宋哈娜', '女', 6720, to_date('1982-10-01', 'yyyy-mm-dd'), 30);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '周美玲', '女', 4120, to_date('1997-05-06', 'yyyy-mm-dd'), 40);
+INSERT INTO T_EMS_V3_EMPLOYEE VALUES (T_EMS_V3_SEQ.nextval, '岛田半藏', '男', 7820, to_date('1992-01-25', 'yyyy-mm-dd'), 50);
+
+SELECT *
+FROM T_EMS_V3_EMPLOYEE;
+
+SELECT *
+FROM T_EMS_V3_DEPARTMENT;
+
+SELECT
+  E.ID       id,
+  E.NAME     name,
+  E.SEX      sex,
+  E.SALARY   salary,
+  E.BIRTHDAY birthday,
+  D.ID       dept_id,
+  D.NAME     dept_name
+FROM T_EMS_V3_EMPLOYEE E LEFT JOIN T_EMS_V3_DEPARTMENT D ON E.DEPT_ID = D.ID
+WHERE D.NAME = '后勤部';
+
+DELETE FROM T_EMS_V3_EMPLOYEE
+WHERE DEPT_ID = 10;
+
+
+SELECT *
+FROM T_EMS_V3_MANAGER;
+
+SELECT *
+FROM (SELECT
+        E.ID       id,
+        E.NAME     name,
+        E.SEX      sex,
+        E.SALARY   salary,
+        E.BIRTHDAY birthday,
+        D.ID       dept_id,
+        D.NAME     dept_name,
+        ROWNUM     rn
+      FROM T_EMS_V3_EMPLOYEE E LEFT JOIN T_EMS_V3_DEPARTMENT D ON E.DEPT_ID = D.ID)
+WHERE rn BETWEEN 1 AND 5
+
+COMMIT;

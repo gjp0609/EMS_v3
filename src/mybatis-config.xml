@@ -1,0 +1,35 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "mybatis-3-config.dtd" >
+<configuration>
+
+    <!--<properties resource="jdbc.properties"/>-->
+
+    <!--开启全局缓存-->
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!-- 别名 -->
+    <typeAliases>
+        <typeAlias type="cn.gjp0609.ems.v3.entity.Manager" alias="Manager"/>
+        <typeAlias type="cn.gjp0609.ems.v3.entity.Department" alias="Department"/>
+        <typeAlias type="cn.gjp0609.ems.v3.entity.Employee" alias="Employee"/>
+    </typeAliases>
+
+    <environments default="oracle">
+        <environment id="oracle">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="oracle.jdbc.OracleDriver"/>
+                <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+                <property name="username" value="hr"/>
+                <property name="password" value="123123"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="cn/gjp0609/ems/v3/dao/impl/EmployeeDaoMapper.xml"/>
+        <mapper resource="cn/gjp0609/ems/v3/dao/impl/DepartmentDaoMapper.xml"/>
+        <mapper resource="cn\gjp0609\ems\v3\dao\impl\ManagerDaoMapper.xml"/>
+    </mappers>
+</configuration>

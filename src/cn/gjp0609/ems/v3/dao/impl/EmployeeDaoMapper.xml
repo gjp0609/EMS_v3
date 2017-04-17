@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.gjp0609.ems.v3.dao.EmployeeDao">
+
+    <!-- 开启缓存123 -->
+    <!--<cache/>-->
+
+    <sql id="selectEnD">
+        SELECT
+            E.ID       id,
+            E.NAME     name,
+            E.SEX      sex,
+            E.SALARY   salary,
+            E.BIRTHDAY birthday,
+            D.ID       dept_id,
+            D.NAME     dept_name,
+            ROWNUM     rn
+        FROM T_EMS_V3_EMPLOYEE E LEFT JOIN T_EMS_V3_DEPARTMENT D ON E.DEPT_ID = D.ID
+    </sql>
+
+    <!-- 设置Employee返回类型 -->
+    <resultMap id="EmployeeRM" type="Employee">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="salary" column="salary"/>
+        <result property="birthday" column="birthday"/>
+        <association property="department" javaType="Department">
+            <id property="id" column="dept_id"/>
+            <result property="name" column="dept_name"/>
+        </association>
+    </resultMap>
+
+    <!-- 添加员工 -->
+    <insert id="addEmp">
+        <selectKey order="BEFORE" keyProperty="id" resultType="Integer">
+            SELECT T_EMS_V3_SEQ.nextval FROM dual
+        </selectKey>
+        INSERT INTO T_EMS_V3_EMPLOYEE VALUES (#{id}, #{name}, #{sex}, #{salary}, #{birthday}, #{department.id})
+    </insert>
+
+    <!-- 更新员工 -->
+    <update id="updateEmp">
+        UPDATE T_EMS_V3_EMPLOYEE
+        <set>
+            <if test="name!=null">NAME = #{name},</if>
+            <if test="sex!=null">SEX = #{sex},</if>
+            <if test="salary!=null">SALARY = #{salary},</if>
+            <if test="birthday!=null">BIRTHDAY = #{birthday},</if>
+            <if test="department!=null">
+                <if test="department.id!=null">DEPT_ID = #{department.name}</if>
+            </if>
+        </set>
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 多条件删除 -->
+    <delete id="deleteEmpByCdt">
+        DELETE FROM T_EMS_V3_EMPLOYEE
+        <where>
+            <if test="id!=null">ID = #{id}</if>
+            <if test="name!=null">AND NAME = #{name}</if>
+            <if test="sex!=null">AND SEX = #{sex}</if>
+            <if test="salary!=null">AND SALARY = #{salary}</if>
+            <if test="birthday!=null">AND BIRTHDAY = #{birthday}</if>
+            <if test="department!=null">
+                <if test="department.id!=null">AND DEPT_ID = #{department.id}</if>
+            </if>
+        </where>
+    </delete>
+    <delete id="deleteEmpByIds">
+        DELETE FROM T_EMS_V3_EMPLOYEE
+        WHERE ID IN
+        <foreach collection="ids" open="(" item="item" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!-- 多条件查询 -->
+    <select id="selectEmpByCdt" resultMap="EmployeeRM">
+        SELECT *
+        FROM (
+        <include refid="selectEnD"/>
+        <where>
+            <if test="emp.id!=null">E.ID = #{emp.id}</if>
+            <if test="emp.name!=null">AND E.NAME = #{emp.name}</if>
+            <if test="emp.sex!=null">AND E.SEX = #{emp.sex}</if>
+            <if test="emp.salary!=null">AND E.SALARY = #{emp.salary}</if>
+            <if test="emp.birthday!=null">AND E.BIRTHDAY = #{emp.birthday}</if>
+            <if test="emp.department!=null">
+                <if test="emp.department.id!=null">AND D.ID = #{emp.department.id}</if>
+                <if test="emp.department.name!=null">AND D.NAME = #{emp.ldepartment.name}</if>
+            </if>
+        </where>
+        )
+        <where>
+            <if test="firstRow!=null">
+                <if test="lastRow!=null">
+                    RN BETWEEN #{firstRow} AND #{lastRow}
+                </if>
+            </if>
+        </where>
+    </select>
+    <select id="selectTotalRows" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM T_EMS_V3_EMPLOYEE
+    </select>
+</mapper>

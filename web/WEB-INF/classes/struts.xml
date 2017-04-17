@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <!-- 员工 -->
+    <package name="emp" namespace="/emp" extends="struts-default">
+        <!-- 管理员登陆拦截器 -->
+        <interceptors>
+            <interceptor name="adminLogin" class="cn.gjp0609.ems.v3.interceptor.MgrLoginInterceptor"/>
+            <interceptor-stack name="loginStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="adminLogin"/>
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="loginStack"/>
+
+        <global-results>
+            <result name="success" type="redirectAction">queryAllEmp</result>
+            <result name="login" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">login</param>
+            </result>
+        </global-results>
+
+        <action name="addEmp" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="addEmp"/>
+
+        <action name="updateEmp" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="updateEmp"/>
+
+        <action name="deleteEmp" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="deleteEmp"/>
+
+        <action name="queryAllEmp" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="queryAllEmp">
+            <result name="success" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">empList</param>
+            </result>
+        </action>
+
+        <action name="getEmpInfo" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="getEmpInfo">
+            <result name="update" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">updateEmp</param>
+            </result>
+        </action>
+
+        <action name="deleteEmps" class="cn.gjp0609.ems.v3.action.EmployeeAction" method="deleteEmps"/>
+
+    </package>
+    <!-- 部门 -->
+    <package name="dept" namespace="/dept" extends="struts-default">
+        <!-- 管理员登陆拦截器 -->
+        <interceptors>
+            <interceptor name="adminLogin" class="cn.gjp0609.ems.v3.interceptor.MgrLoginInterceptor"/>
+            <interceptor-stack name="loginStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="adminLogin"/>
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="loginStack"/>
+
+        <global-results>
+            <result name="success" type="redirectAction">
+                <param name="namespace">/emp</param>
+                <param name="actionName">queryAllEmp</param>
+            </result>
+            <result name="login" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">login</param>
+            </result>
+        </global-results>
+
+        <action name="getDeptInfo" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="getDeptInfo">
+            <result name="dept" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">deptInfo</param>
+            </result>
+        </action>
+
+        <action name="updateDept" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="updateDept">
+            <result name="success" type="chain">
+                <param name="namespace">/commons</param>
+                <param name="actionName">updateDept</param>
+            </result>
+        </action>
+
+        <action name="deleteDept" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="deleteDept"/>
+
+        <action name="toUpdateDept" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="toUpdateDept"/>
+
+        <action name="addDept" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="addDept"/>
+
+        <action name="getAllDepts" class="cn.gjp0609.ems.v3.action.DepartmentAction" method="getAllDepts"/>
+    </package>
+
+    <!-- 管理员 -->
+    <package name="manager" namespace="/manager" extends="struts-default">
+        <global-results>
+            <result name="login" type="redirectAction">
+                <param name="namespace">/commons</param>
+                <param name="actionName">login</param>
+            </result>
+        </global-results>
+        <action name="login" class="cn.gjp0609.ems.v3.action.ManagerAction" method="login">
+            <result name="success" type="redirectAction">
+                <param name="namespace">/emp</param>
+                <param name="actionName">queryAllEmp</param>
+            </result>
+        </action>
+        <action name="register" class="cn.gjp0609.ems.v3.action.ManagerAction" method="register">
+            <result name="none" type="redirectAction">
+                <param name="namespace">/commons</param>
+                <param name="actionName">register</param>
+            </result>
+        </action>
+    </package>
+    <!-- 通配 -->
+    <package name="commons" namespace="/commons" extends="struts-default">
+        <interceptors>
+            <!-- 设置拦截 cookie -->
+            <interceptor-stack name="myStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="cookie">
+                    <param name="cookiesName">username,password</param>
+                </interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        <!-- 通用 action, 默认跳转至对应 jsp 页面 -->
+        <action name="*">
+            <result name="success">/WEB-INF/{1}.jsp</result>
+        </action>
+        <!-- 主页跳转 action, 用于获得 cookie, 跳转至 login.jsp -->
+        <action name="welcome" class="cn.gjp0609.ems.v3.action.CookieAction">
+            <interceptor-ref name="myStack"/>
+            <result name="success" type="redirectAction">login</result>
+        </action>
+
+        <action name="getVCode" class="cn.gjp0609.ems.v3.action.CommonAction" method="getVCode"/>
+    </package>
+</struts>
