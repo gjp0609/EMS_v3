@@ -12,6 +12,53 @@
 <head>
     <title>login</title>
     <link rel="stylesheet" href="<s:url value="/css/style.css" />">
+    <script type="text/javascript">
+        function checkUsername() {
+            var username = document.getElementById("username");
+            var span = document.getElementById("usernameSp");
+            if (username.value.length <= 1) {
+                span.innerHTML = "用户名长度不够";
+                span.style.color = "red";
+                return false;
+            } else {
+                span.innerHTML = "";
+                return true;
+            }
+        }
+
+        function checkPassword() {
+            var password = document.getElementById("password");
+            var span = document.getElementById("passwordSp");
+            if (password.value.length <= 2) {
+                span.innerHTML = "密码长度不够";
+                span.style.color = "red";
+                return false;
+            } else {
+                span.innerHTML = "";
+                return true;
+            }
+        }
+
+        function checkVcode() {
+            var vcode = document.getElementById("vcode");
+            var span = document.getElementById("vcodeSp");
+            if (vcode.value.length < 4) {
+                span.innerHTML = "验证码长度不够";
+                span.style.color = "red";
+                return false;
+            } else {
+                span.innerHTML = "";
+                return true;
+            }
+        }
+
+        function checkAll() {
+            if (!checkUsername()) return false;
+            if (!checkPassword()) return false;
+            if (!checkVcode()) return false;
+        }
+
+    </script>
 </head>
 <%
     //在 pageContext 中存入当前时间
@@ -41,19 +88,24 @@
         <div id="content">
             <p id="whereami"></p>
             <h1> login </h1>
-            <form action="<s:url namespace="/manager" action="login"/>" method="post">
+            <form action="<s:url namespace="/manager" action="login"/>" method="post" onsubmit="return checkAll()">
                 <table cellpadding="0" cellspacing="0" border="0" class="form_table">
                     <tr>
                         <td valign="middle" align="right"> username:</td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="manager.name"
-                                   value="<s:property value=" #attr.ck"/>" title="此处输入用户名"/>
+                            <input type="text" class="inputgri" name="manager.name" maxlength="12"
+                                   onblur="checkUsername()"
+                                   value="<s:property value=" #attr.ck"/>" title="此处输入用户名" id="username"/>
+                            <span id="usernameSp"></span>
                         </td>
                     </tr>
                     <tr>
                         <td valign="middle" align="right"> password:</td>
                         <td valign="middle" align="left">
-                            <input type="password" class="inputgri" name="manager.password" title="此处输入密码"/>
+                            <input type="password" maxlength="10" class="inputgri" name="manager.password"
+                                   title="此处输入密码"
+                                   id="password" onblur="checkPassword()"/>
+                            <span id="passwordSp"></span>
                         </td>
                     </tr>
                     <tr>
@@ -66,7 +118,9 @@
                     <tr>
                         <td valign="middle" align="right"> verify code:</td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="vcode" title="此处输入验证码"/>
+                            <input type="text" class="inputgri" maxlength="4" name="vcode" title="此处输入验证码"
+                                   id="vcode" onblur="checkVcode()"/>
+                            <span id="vcodeSp"></span>
                         </td>
                     </tr>
                     <tr>
